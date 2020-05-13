@@ -1,0 +1,4 @@
+﻿  WindowsProject5.cpp
+c:\users\user\source\repos\windowsproject5\windowsproject5\windowsproject5.cpp(288): warning C4101: s: неиспользованная локальная переменная
+c:\users\user\source\repos\windowsproject5\windowsproject5\windowsproject5.cpp(289): warning C4101: ch: неиспользованная локальная переменная
+  WindowsProject5.vcxproj -> C:\Users\User\source\repos\WindowsProject5\Debug\WindowsProject5.exe
