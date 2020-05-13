@@ -1,0 +1,6 @@
+﻿  last_lab.cpp
+c:\users\user\source\repos\last_lab\last_lab\last_lab.cpp(116): warning C4229: устаревший элемент: пропуск модификаторов для данных
+c:\users\user\source\repos\last_lab\last_lab\last_lab.cpp(116): warning C4101: a: неиспользованная локальная переменная
+c:\users\user\source\repos\last_lab\last_lab\last_lab.cpp(186): warning C4101: szT: неиспользованная локальная переменная
+c:\users\user\source\repos\last_lab\last_lab\last_lab.cpp(187): warning C4101: buff: неиспользованная локальная переменная
+  last_lab.vcxproj -> C:\Users\User\source\repos\last_lab\Debug\last_lab.exe
