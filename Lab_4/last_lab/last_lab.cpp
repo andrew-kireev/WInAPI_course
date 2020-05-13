@@ -145,79 +145,23 @@ BOOL thread1_working = false;
 BOOL thread2_working = false;
 
 
-
-
-
 DWORD WINAPI Thread1(LPVOID t)
 {
-	std::vector<std::string> data;
-	
-	/*
-	std::string line;
-	std::fstream in;
-	in.open("C:\\Users\\User\\OneDrive\\Рабочий стол\\Вывод - Сборка.txt");
-	//std::fstream in("C:\\Users\\User\\OneDrive\\Рабочий стол\\Вывод - Сборка.txt");
-	std::fstream out("C:\\Users\\User\\source\\repos\\last_lab\\last_lab\\test.txt‪");
-	if (in.is_open())
-	{
-		while (getline(in, line))
-		{
-			data.push_back(line);
-		}
-	}
-	in << "зашел";
-	in.close();
-	for (auto i : data) {
-		out << i;
-	}
-	out.close();   */
-
-	for (int i = 0; i < 10; ++i) {
-		data.push_back(std::to_string(i));
-
-	}
-
 	while (thread1_working) {
 
-	
-
-		RECT rect;
-		PAINTSTRUCT ps;
-		TCHAR szT[30];
-		TCHAR buff[300];
-		GetClientRect(HWND(t), &rect);
-		std::cout << "p" << std::endl;
-		//_stprintf(buff, TEXT("Height: %d Width: %d"), 0, 0);
-		for (auto i : data) {
-			std::cout << i << std::endl;
-			HDC hdc = GetDC(HWND(t));
-			SetTextColor(hdc, RGB(rand() % 255, rand() % 255, rand() % 255));
-			TextOut(hdc, 200, 200, reinterpret_cast<const wchar_t*>(i.c_str()), i.size());
-			EndPaint(HWND(t), &ps);
-			//Sleep(60);
-		} 
 	}
-	
+
 	return 0;
 }
+
+
+
 
 
 DWORD WINAPI Thread2(LPVOID t)
 {
 	while (thread2_working) {
-		RECT rect;
-		PAINTSTRUCT ps;
-		GetWindowRect(HWND(t), &rect);
-		HDC hdc = GetDC(HWND(t));
-		hdc = BeginPaint(hWnd, &ps);
-		HPEN pen = ::CreatePen(PS_SOLID, 4, RGB(255, 0, 0));
-		GetClientRect(hWnd, &rect);
-		void* oldPen = ::SelectObject(hdc, pen);
-		::MoveToEx(hdc, 0, 0, NULL);
-		::LineTo(hdc, 200, 175);
-		EndPaint(hWnd, &ps);
-		::SelectObject(hdc, (HGDIOBJ)oldPen);
-		::DeleteObject(pen);
+	
 	}
 	return 0;
 }
