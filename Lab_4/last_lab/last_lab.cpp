@@ -3,13 +3,16 @@
 
 #include "framework.h"
 #include "last_lab.h"
+#include <Windows.h>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
+#include <map>
 
 
 #define MAX_LOADSTRING 100
+#define PATH L"C:\\Users\\User\\source\\repos\\last_lab\\last_lab\\test.txt"
 
 
 #pragma warning(disable : 4996)
@@ -107,7 +110,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // Сохранить маркер экземпляра в глобальной переменной
 
    hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+      CW_USEDEFAULT, 0, 600, 600, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
@@ -145,23 +148,142 @@ BOOL thread1_working = false;
 BOOL thread2_working = false;
 
 
+LPWSTR convertStr(LPCSTR pInStr)
+{
+	int length = strlen(pInStr);
+	wchar_t * pwstr = new wchar_t[length];
+	int result = MultiByteToWideChar(
+		CP_ACP, MB_PRECOMPOSED, pInStr, length,
+		pwstr, length
+	);
+	pwstr[length] = L'\0';
+	return LPWSTR(pwstr);
+}
+
+std::map<int, int> names = { {7, 8},  {3, 7}, {2, 7}, {1, 8},
+							{4, 7}, {5, 13}, {6, 9} };
+
+const TCHAR szCounterFileName[] = L"C:\\Users\\User\\source\\repos\\last_lab\\last_lab\\list.txt";
+const TCHAR szCheckOk[] = L"Все в порядке, продолжайте работу";
+
 DWORD WINAPI Thread1(LPVOID t)
 {
-	while (thread1_working) {
+	//std::vector<std::string> data;
+	//std::wstring buffer;
+	//buffer.resize(3000);
+	OVERLAPPED olf = { 0 };
+	LARGE_INTEGER li = { 0 };
+	li.QuadPart = 1;
+	olf.Offset = li.LowPart;
+	olf.OffsetHigh = li.HighPart;
 
+	LPSTR buffer = (CHAR*)calloc(300, sizeof(CHAR));
+	DWORD iNumread = 0;
+
+	DWORD dwCounter, dwTemp;
+	HANDLE hFile = CreateFile(PATH, GENERIC_READ | GENERIC_WRITE, 0, NULL,
+		OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+	if (!ReadFile(hFile, buffer, 300, &iNumread, &olf)) {
+		return 1;
 	}
 
+	int i = 1;
+	int k = 0;
+
+	std::string data = buffer;
+	
+	while (thread1_working) {
+
+		
+		RECT rect;
+		PAINTSTRUCT ps;
+		GetClientRect(HWND(t), &rect);
+		std::cout << "p" << std::endl;
+		//_stprintf(buff, TEXT("Height: %d Width: %d"), 0, 0);
+
+		LPCWSTR new_buf = convertStr(buffer);
+
+		
+		
+		HDC hdc = GetDC(HWND(t));
+		SelectObject(hdc, GetStockObject(DC_PEN));
+		SetDCPenColor(hdc, RGB(255, 255, 255));
+		SelectObject(hdc, CreateSolidBrush(RGB(255, 255, 255)));
+		Rectangle(hdc, 50, 50, 400, 305);
+		SetTextColor(hdc, RGB(rand() % 255, rand() % 255, rand() % 255));
+		TextOut(hdc, 280, 100, new_buf + k, names[i]);
+		EndPaint(HWND(t), &ps);
+		Sleep(1000);
+		k += names[i];
+		++i;
+		if (i == 8) {
+			i = 1;
+			k = 0;
+		}
+
+		/*for (auto i : data) {
+			HDC hdc = GetDC(HWND(t));
+			SetTextColor(hdc, RGB(rand() % 255, rand() % 255, rand() % 255));
+			TextOut(hdc, 280, 100, reinterpret_cast<const wchar_t*>(i.c_str), i.size());
+			EndPaint(HWND(t), &ps);
+			Sleep(1000);
+		}  */
+	}
+	
 	return 0;
 }
 
 
-
-
-
 DWORD WINAPI Thread2(LPVOID t)
 {
+	bool left_side = true;
+
 	while (thread2_working) {
 	
+		RECT rect;
+		PAINTSTRUCT ps;
+		GetWindowRect(HWND(t), &rect);
+		int width = (int)(rect.right - rect.left);
+		int height = (int)(rect.bottom - rect.top);
+		HDC hdc = GetDC(HWND(t));
+		HBRUSH hBrush;
+		hBrush = CreateHatchBrush(HS_FDIAGONAL, RGB(rand() % 255, rand() % 255, rand() % 255));
+
+		if (left_side) {
+			
+			::MoveToEx(hdc, 250, 400, NULL);
+			::LineTo(hdc, 250, 450);
+			::MoveToEx(hdc, 150, 350, NULL);
+			::LineTo(hdc, 350, 450);
+			Sleep(1000);
+			SelectObject(hdc, GetStockObject(DC_PEN));
+			SetDCPenColor(hdc, RGB(255, 255, 255));
+			SelectObject(hdc, CreateSolidBrush(RGB(255, 255, 255)));
+			Rectangle(hdc, 150, 450, 350, 350);
+			ReleaseDC(HWND(t), hdc);
+	
+			::SelectObject(hdc, (HGDIOBJ)hBrush);
+			::DeleteObject(hBrush);
+			left_side = false;
+
+	
+		}
+		else {
+
+	
+			::MoveToEx(hdc, 250, 400, NULL);
+			::LineTo(hdc, 250, 450);
+			::MoveToEx(hdc, 350, 350, NULL);
+			::LineTo(hdc, 150, 450);
+			Sleep(1000);
+			SelectObject(hdc, GetStockObject(DC_PEN));
+			SetDCPenColor(hdc, RGB(255, 255, 255));
+			SelectObject(hdc, CreateSolidBrush(RGB(255, 255, 255)));
+			Rectangle(hdc, 150, 450, 350, 350);
+			ReleaseDC(HWND(t), hdc);
+			left_side = true;
+		}
 	}
 	return 0;
 }
@@ -228,14 +350,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 return DefWindowProc(hWnd, message, wParam, lParam);
             }
 
-        }
-        break;
-    case WM_PAINT:
-        {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: Добавьте сюда любой код прорисовки, использующий HDC...
-            EndPaint(hWnd, &ps);
         }
         break;
     case WM_DESTROY:
